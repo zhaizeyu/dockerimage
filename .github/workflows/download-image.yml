@@ -1,0 +1,28 @@
+name: Docker Image Downloader
+
+on:
+  workflow_dispatch: # 允许手动点击按钮触发
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Pull Docker Image
+        run: |
+          docker pull nousresearch/hermes-agent:latest
+
+      - name: Save and Compress Image
+        run: |
+          # 导出并压缩为 tar.gz
+          docker save -o hermes-agent.tar.gz nousresearch/hermes-agent:latest
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: hermes-agent-package
+          path: hermes-agent.tar.gz
+          retention-days: 1 # 文件保留1天，下完即删
